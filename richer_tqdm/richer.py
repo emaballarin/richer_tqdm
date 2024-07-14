@@ -119,6 +119,22 @@ class RateColumn(ProgressColumn):
         )
 
 
+class PostfixColumn(ProgressColumn):
+    def __init__(self, tqdm_class: std_tqdm) -> None:
+        self.tqdm_class: std_tqdm = tqdm_class
+        super().__init__()
+
+    def render(self, task) -> Text:
+        return Text(
+            (
+                f"[ {self.tqdm_class.postfix} ]"
+                if self.tqdm_class.postfix is not None
+                else ""
+            ),
+            style="progress.postfix",
+        )
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -142,12 +158,16 @@ class TqdmRich(std_tqdm):
         kwargs["disable"] = bool(kwargs.get("disable", False))
         progress = kwargs.pop("progress", None)
         options = kwargs.pop("options", {}).copy()
+        render_postfix: bool = kwargs.pop("render_postfix", False)
         super().__init__(*args, **kwargs)
 
         if self.disable:
             return
 
         d = self.format_dict
+        drop_postfix: List[PostfixColumn] = (
+            [PostfixColumn(self)] if render_postfix else []
+        )
         if progress is None:
             progress = (
                 "[progress.description]{task.description}"
@@ -167,6 +187,7 @@ class TqdmRich(std_tqdm):
                     unit_divisor=d["unit_divisor"],
                 ),
                 "]",
+                *drop_postfix,
             )
         options.setdefault("transient", not self.leave)
         self._prog = Progress(*progress, **options)

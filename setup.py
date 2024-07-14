@@ -18,7 +18,7 @@ def _fread(fname: str):
 
 setup(
     name="richer_tqdm",
-    version="0.0.2",
+    version="0.0.3",
     description="Improved tqdm.rich decorator for iterators and associated machinery.",
     long_description=_fread("README.md"),
     long_description_content_type="text/markdown",
