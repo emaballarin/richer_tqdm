@@ -120,11 +120,14 @@ class RateColumn(ProgressColumn):
 
 
 class PostfixColumn(ProgressColumn):
+    """Renders tqdm postfix."""
+
     def __init__(self, tqdm_class: std_tqdm) -> None:
         self.tqdm_class: std_tqdm = tqdm_class
         super().__init__()
 
     def render(self, task) -> Text:
+        """Show tqdm postfix."""
         return Text(
             (
                 f"[ {self.tqdm_class.postfix} ]"
